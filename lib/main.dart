@@ -1,30 +1,33 @@
+import 'package:floorball_track/archive_main.dart';
+import 'package:floorball_track/change_main.dart';
+import 'package:floorball_track/const.dart';
+import 'package:floorball_track/statistics.dart';
+import 'package:floorball_track/toast_messages.dart';
 import 'package:flutter/material.dart';
 
+import 'ballpossession_main.dart';
+
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatelessWidget with RouteAware {
+  MyApp({super.key});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'floorball stats',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+          backgroundColor: blue3,
+          primaryColor: white1,
+          fontFamily: 'Varela',
+          textTheme: TextTheme(
+            bodyText1: TextStyle(fontSize: 20),
+            bodyText2: TextStyle(fontSize: 15, color: white1),
+          )),
+      home: const MyHomePage(title: 'floorball stats'),
     );
   }
 }
@@ -48,68 +51,101 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  TextEditingController tec = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: blue3,
+        appBar: AppBar(
+          backgroundColor: blue1,
+          toolbarHeight: MediaQuery.of(context).size.height / 100 * 7,
+          title: Text(widget.title),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              addButton(Icons.add, Icons.timer_outlined, 'ball possession stat',() {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('name your ball possession stat'),
+                      content: TextField(
+                        controller: tec,
+                        decoration: const InputDecoration(
+                          hintText: 'Name',
+                          icon: Icon(Icons.timer_outlined),
+                        ),
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('cancel'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      BallPossessionMainPage(
+                                        ballPossStat: BallPossessionStat(
+                                            name: tec.text),
+                                      )),
+                            );
+                          },
+                          child: const Text('submit'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },),
+              addButton(Icons.add, Icons.compare_arrows, 'change stat', () {
+                showToast("not available yet");
+              }),
+              addButton(Icons.add, Icons.gps_fixed, 'shooting stat', () {
+                showToast("not available yet");
+              }),
+              addButton(Icons.keyboard_double_arrow_right, Icons.archive_outlined, 'archive', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ArchiveMainPage()),
+                );
+              }),
+            ],
+          ),
+        ),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
+    );
+  }
+
+  Widget addButton(IconData icon1, IconData icon2, String text, Function() function){
+    return  SizedBox(
+      width: MediaQuery.of(context).size.width/100*88,
+      height: MediaQuery.of(context).size.height/100*15,
+      child: TextButton(
+        style: TextButton.styleFrom(
+            padding: EdgeInsets.all(5),
+            backgroundColor: blue1 ,
+            foregroundColor: white1,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15))),
+        onPressed: function,
+        child: Row(
+          children: [
+            Icon(icon1),
+            Icon(icon2),
+            Expanded(child: Center(child: Text(text)))
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

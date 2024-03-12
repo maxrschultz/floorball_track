@@ -1,0 +1,1 @@
+enum StatBallPossessionType{myTeam,enemyTeam,unclear, paused}

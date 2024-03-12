@@ -1,0 +1,1 @@
+enum StatType{ballPossession, shoot, change}

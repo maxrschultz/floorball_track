@@ -1,0 +1,1 @@
+enum PeriodType {firstThird,secondThird, thirdThird,overtime}
